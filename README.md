@@ -35,5 +35,8 @@ A multivariate gaussian distribution was used to capture the static charechterst
 ![Figure joint](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/joint_dist.png)
 
 ### Combining both models:
-An anomlay score is a value that incdicates the likelihood of the 
+An anomaly score is a value that indicates the likelihood of the presence of a fault. The Mahalanobis distance is a measure of how far an observation is from a distribution. This work proposes an anomaly score that combines both the temporal and static characteristics of normal operating conditions (NOC). It achieves this by fusing the Mahalanobis distance of a process observation with respect to both the temporal and static models using the following equation
 
+![Eq](https://latex.codecogs.com/svg.image?\begin{equation}\label{eq:anom_score}AS=\alpha\eta_Td_M^T&plus;(1-\alpha)\eta_Jd_M^J\end{equation}) 
+
+where ![alpha](https://latex.codecogs.com/svg.image?\alpha) is an importance weight in the range [0,1], ![eta_T](https://latex.codecogs.com/svg.image?\eta_{T}) and ![eta_J](https://latex.codecogs.com/svg.image?\eta_{J}) are scaling factors, ![d_T](https://latex.codecogs.com/svg.image?d_M^T) and ![d_J](https://latex.codecogs.com/svg.image?d_M^J) denote the Mahlanobis distances to the temporal and static models, respectively.
