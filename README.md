@@ -17,7 +17,9 @@ This work presents a method that uses only Normal Operating Conditions (NOC) dat
 -  Differentiate between faults
 -  Find out which process variables relate the most to each discovered fault type
 
-The proposed work is tested on the Tennessee Eastman Process (TEP). A [Jupyter notebook] 
+The proposed work is tested on the Tennessee Eastman Process (TEP). The full analysis is provided in this [Jupyter notebook](https://github.com/mbakr99/unsupervised-fault-discovery/blob/e5830f0c26041d850854d53189ec85d23f97779b/FCT_6.ipynb). This file provides a high-level description of the method. It also provides a discussion and interpretation of the results. 
 
 ## Detect Faults:
-The proposed work relies on capturing the 
+The proposed work relies on capturing the behavior of the process during NOC. This is done using two probabilistic models that capture two aspects of the NOC behavior. First, a temporal probabilistic model is used to capture the temporal relation between consecutive process measurements. This model reports a fault when the NOC temporal behavior is violated. The second is a static distribution to capture the correlation and the range information of the process variables during NOC. This model is concerned with how a single observation fits the trend learned from the NOC data. It reports a fault when a the NOC static characteristics are violated.
+
+### Temporal        
