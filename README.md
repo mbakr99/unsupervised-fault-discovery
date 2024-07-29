@@ -19,9 +19,9 @@ This work presents a method that uses only Normal Operating Conditions (NOC) dat
 
 The proposed work is tested on the Tennessee Eastman Process (TEP). The full analysis is provided in this [Jupyter notebook](https://github.com/mbakr99/unsupervised-fault-discovery/blob/e5830f0c26041d850854d53189ec85d23f97779b/FCT_6.ipynb). This file provides a high-level description of the method. It also provides a discussion and interpretation of the results. 
 
-## Detect Faults:
+## Detecting faults:
 The proposed work relies on capturing the behavior of the process during NOC. This is done using two probabilistic models that capture two aspects of the NOC behavior. First, a temporal probabilistic model is used to capture the temporal relation between consecutive process measurements. This model reports a fault when the NOC temporal behavior is violated. The second is a static distribution to capture the correlation and the range information of the process variables during NOC. This model is concerned with how a single observation fits the trend learned from the NOC data. It reports a fault when the NOC static characteristics are violated. 
-### Temporal model:
+#### Temporal model:
 A Probabilistic Recurrent Neural Network (PRNN) of a custom structure was created using [Tensorflow](https://www.tensorflow.org) and [Tensorflow probaility](https://www.tensorflow.org/probability)  and used to capture the NOC temporal behavior. The modelt utilizes the latest measurement to predict the distribution of the future one. The actual measurement is then compared to the distribution, and a fault is reported based on "how well it conforms to the distribution". The NOC data was partitioned into training and testing sets. The training set was normalized using standard normalization, and the normalization parameters were saved to normalize the model inputs at testing and deployment. More details can be found in this [FCT_6.ipynb](https://github.com/mbakr99/unsupervised-fault-discovery/blob/e5830f0c26041d850854d53189ec85d23f97779b/FCT_6.ipynb). The prediction of the model on the testing set vs the actual measurements is shown below 
 
 ![Figure RNN results](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/pred_val.png)          
@@ -29,17 +29,25 @@ A Probabilistic Recurrent Neural Network (PRNN) of a custom structure was create
 Note that the temporal distribution captures the NOC behavior accurately as the actual measurments fall well within the confidence interval of the prediction at each time step.
 A description of the process variables that appear in the above figure can be found in this [source paper](https://doi.org/10.1016/0098-1354(93)80018-I). 
 
-### Static model:
+#### Static model:
 A multivariate gaussian distribution was used to capture the static charechterstics of the NOC data. Unlike the previous model, this model does not change with time. The following displays the model for the first three process variables. Notice how the actual NOC data distributin matches the model. 
 
 ![Figure joint](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/joint_dist.png)
 
-### Combining both models:
+#### Combining both models:
 An anomaly score is a value that indicates the likelihood of the presence of a fault. The Mahalanobis distance is a measure of how far an observation is from a distribution. This work proposes an anomaly score that combines both the temporal and static characteristics of normal operating conditions (NOC). It achieves this by fusing the Mahalanobis distance of a process observation with respect to both the temporal and static models using the following equation
 
 ![Eq](https://latex.codecogs.com/svg.image?\begin{equation}\label{eq:anom_score}AS=\alpha\eta_Td_M^T&plus;(1-\alpha)\eta_Jd_M^J\end{equation}) 
 
 where ![alpha](https://latex.codecogs.com/svg.image?\alpha) is an importance weight in the range [0,1], ![eta_T](https://latex.codecogs.com/svg.image?\eta_{T}) and ![eta_J](https://latex.codecogs.com/svg.image?\eta_{J}) are scaling factors, ![d_T](https://latex.codecogs.com/svg.image?d_M^T) and ![d_J](https://latex.codecogs.com/svg.image?d_M^J) denote the Mahlanobis distances to the temporal and static models, respectively. 
-The importance of this novel anomlay score is two folds. First, by leveragin both the temporal and static characteristics of the process, the fault detection is enhanced. This becomes clear for faults the don't violate the temporal charecterstics but are out of the NOC variables range, such as fault 5 in the TEP. Fault 5 is a controller fault, meaning that after a period of time, the control system is able to reject the disturbance causing the fault, which regulates the process back to normal. However, one of the manipulated variables -XMV(11)- remains at a higher level than that of NOC. This is shown in the figure below
+The importance of this novel anomlay score is two folds. First, by leveragin both the temporal and static characteristics of the process, the fault detection is enhanced. This becomes clear for faults the don't violate the temporal charecterstics but are out of the NOC variables range, such as fault 5 in the TEP. Fault 5 is a controllable fault, meaning that the control system is able to reject the disturbance causing the fault, which prevents the process from violating the NOC behavior. However, one of the manipulated variables -XMV(11)- remains at a higher level than that of NOC. This is shown below
 
-     
+![Figure f5](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/f5_fd.png)
+
+On the other hand, relying solely on the static aspect can lead to an increased number of false alarms. This occurs when the process is operating normally, but the fault diagnosis system incorrectly reports faults.
+
+If only the temporal aspect of the NOC behavior was cosidered, the fault will not be detected as shown below 
+
+![Figure as-f5](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/as_f5.png)
+
+#### Fault detection results:     
