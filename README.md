@@ -54,7 +54,7 @@ If only the temporal aspect of the NOC behavior was cosidered, the fault will no
 
 ## The fault detection performance of the proposed model
 
-The last column contains the results of [Sun et al. (2020)](https://doi.org/10.1016/j.ifacol.2020.12.1125) for comparison. All values, except the ones in parentheses, represent the model detection accuracy. The FPR is shown for faults \( f_3 \), \( f_9 \), and \( f_{15} \).
+The last column contains the results of [Sun et al. (2020)](https://doi.org/10.1016/j.compchemeng.2020.106991) for comparison. All values, except the ones in parentheses, represent the model detection accuracy. The FPR is shown for faults f3, f9, and f15.
 
 | Fault Type    | FPR    | FNR    | Accuracy | Sun et al.   |
 |---------------|--------|--------|----------|--------------|
@@ -79,3 +79,6 @@ The last column contains the results of [Sun et al. (2020)](https://doi.org/10.1
 | **f19**       | 0.625  | 20.500 | 82.81    | *88.25*      |
 | **f20**       | 0.625  | 13.375 | 88.75    | *78.63*      |
 | f21           | 2.500  | 52.125 | 56.15    | *48.00*      |
+
+
+The average fault detection accuracy, excluding faults f3​, f9​, and f15​, is 91.96%, which is slightly higher than the 91.07% reported by [Sun et al. (2020)](https://doi.org/10.1016/j.compchemeng.2020.106991). Additionally, for  f3​, f9​, and f15, the proposed model achieves a significantly lower false positive rate (FPR), with reductions of 62.5% for f3​ and 91.22% for f15​. This reduction is attributed to the better generalization of the proposed model and the novel anomaly score.
