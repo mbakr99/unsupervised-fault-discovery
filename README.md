@@ -82,3 +82,9 @@ The last column contains the results of [Sun et al. (2020)](https://doi.org/10.1
 
 
 The average fault detection accuracy, excluding faults f3​, f9​, and f15​, is 91.96%, which is slightly higher than the 91.07% reported by [Sun et al. (2020)](https://doi.org/10.1016/j.compchemeng.2020.106991). Additionally, for  f3​, f9​, and f15, the proposed model achieves a significantly lower false positive rate (FPR), with reductions of 62.5% for f3​ and 91.22% for f15​. This reduction is attributed to the better generalization of the proposed model and the novel anomaly score.
+
+## Extracting features:
+Extracting good features is crucial for distinguishing between different faults. Since no labels exist, the concept of "different" is vague and may need to be determined by field experts. However, a good starting point is to consider faults that have a distinct impact on process behavior as "different." To achieve this, the effect of the fault on process behavior is first isolated by subtracting the nominal NOC behavior from the process observations. This is accomplished using the predictions of the trained PRNN model and the static model. The difference between the process measurements and the measurements predicted by the PRNN or static model is referred to as residual data. By applying manual feature extraction methods to the residual data, different faults can be separated, as demonstrated below.
+
+   
+
