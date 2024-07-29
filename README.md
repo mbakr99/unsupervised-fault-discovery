@@ -39,4 +39,7 @@ An anomaly score is a value that indicates the likelihood of the presence of a f
 
 ![Eq](https://latex.codecogs.com/svg.image?\begin{equation}\label{eq:anom_score}AS=\alpha\eta_Td_M^T&plus;(1-\alpha)\eta_Jd_M^J\end{equation}) 
 
-where ![alpha](https://latex.codecogs.com/svg.image?\alpha) is an importance weight in the range [0,1], ![eta_T](https://latex.codecogs.com/svg.image?\eta_{T}) and ![eta_J](https://latex.codecogs.com/svg.image?\eta_{J}) are scaling factors, ![d_T](https://latex.codecogs.com/svg.image?d_M^T) and ![d_J](https://latex.codecogs.com/svg.image?d_M^J) denote the Mahlanobis distances to the temporal and static models, respectively.
+where ![alpha](https://latex.codecogs.com/svg.image?\alpha) is an importance weight in the range [0,1], ![eta_T](https://latex.codecogs.com/svg.image?\eta_{T}) and ![eta_J](https://latex.codecogs.com/svg.image?\eta_{J}) are scaling factors, ![d_T](https://latex.codecogs.com/svg.image?d_M^T) and ![d_J](https://latex.codecogs.com/svg.image?d_M^J) denote the Mahlanobis distances to the temporal and static models, respectively. 
+The importance of this novel anomlay score is two folds. First, by leveragin both the temporal and static characteristics of the process, the fault detection is enhanced. This becomes clear for faults the don't violate the temporal charecterstics but are out of the NOC variables range, such as fault 5 in the TEP. Fault 5 is a controller fault, meaning that after a period of time, the control system is able to reject the disturbance causing the fault, which regulates the process back to normal. However, one of the manipulated variables -XMV(11)- remains at a higher level than that of NOC. This is shown in the figure below
+
+     
