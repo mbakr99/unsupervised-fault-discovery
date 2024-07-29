@@ -16,3 +16,8 @@ This work presents a method that uses only Normal Operating Conditions (NOC) dat
 -  Extract descriptive features
 -  Differentiate between faults
 -  Find out which process variables relate the most to each discovered fault type
+
+The proposed work is tested on the Tennessee Eastman Process (TEP). A [Jupyter notebook] 
+
+## Detect Faults:
+The proposed work relies on capturing the 
