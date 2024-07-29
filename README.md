@@ -51,3 +51,31 @@ If only the temporal aspect of the NOC behavior was cosidered, the fault will no
 ![Figure as-f5](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/as_f5.png)
 
 #### Fault detection results:     
+
+## The fault detection performance of the proposed model
+
+The last column contains the results of [Sun et al. (2020)](https://doi.org/10.1016/j.ifacol.2020.12.1125) for comparison. All values, except the ones in parentheses, represent the model detection accuracy. The FPR is shown for faults \( f_3 \), \( f_9 \), and \( f_{15} \).
+
+| Fault Type    | FPR    | FNR    | Accuracy | Sun et al.   |
+|---------------|--------|--------|----------|--------------|
+| **f1**        | 0.625  | 0.125  | 99.79    | *99.75*      |
+| **f2**        | 1.875  | 1.375  | 98.54    | *99.00*      |
+| f3            | 1.875  | 97.88  | 18.13    | (*5.00*)     |
+| **f4**        | 1.250  | 0.125  | 99.69    | *100.00*     |
+| f5            | 1.250  | 0.000  | 99.79    | *100.00*     |
+| **f6**        | 0.000  | 0.000  | 100.00   | *100.00*     |
+| **f7**        | 0.000  | 0.000  | 100.00   | *100.00*     |
+| f8            | 0.625  | 2.125  | 98.13    | *98.12*      |
+| f9            | 3.750  | 96.750 | 18.750   | (*5.00*)     |
+| f10           | 0.625  | 16.750 | 85.94    | *87.38*      |
+| **f11**       | 1.875  | 24.750 | 79.06    | *74.75*      |
+| f12           | 1.250  | 0.125  | 99.69    | *99.75*      |
+| **f13**       | 0.625  | 4.750  | 95.94    | *95.75*      |
+| **f14**       | 0.000  | 0.000  | 100.00   | *100.00*     |
+| f15           | 0.625  | 95.875 | 20.00    | (*7.12*)     |
+| f16           | 2.500  | 16.000 | 86.250   | *90.38*      |
+| **f17**       | 1.250  | 5.000  | 95.63    | *96.13*      |
+| f18           | 1.875  | 10.000 | 91.35    | *90.63*      |
+| **f19**       | 0.625  | 20.500 | 82.81    | *88.25*      |
+| **f20**       | 0.625  | 13.375 | 88.75    | *78.63*      |
+| f21           | 2.500  | 52.125 | 56.15    | *48.00*      |
