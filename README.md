@@ -87,4 +87,8 @@ The average fault detection accuracy, excluding faults f3​, f9​, and f15​,
 Extracting good features is crucial for distinguishing between different faults. Since no labels exist, the concept of "different" is vague and may need to be determined by field experts. However, a good starting point is to consider faults that have a distinct impact on process behavior as "different." To achieve this, the effect of the fault on process behavior is first isolated by subtracting the nominal NOC behavior from the process observations. This is accomplished using the predictions of the trained PRNN model and the static model. The difference between the process measurements and the measurements predicted by the PRNN or static model is referred to as residual data. By applying manual feature extraction methods to the residual data, different faults can be separated, as demonstrated below.
 
    
+![lat_clust](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/t-sne_lat.png)
 
+![stat_resid_clust](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/t-sne_stat_resid.png)
+
+![lat_clust](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/t-sne_temp_resid.png)
