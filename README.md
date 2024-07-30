@@ -112,6 +112,8 @@ After separating the faulty observations into clusters, each cluster’s tempora
 The process begins by applying Principal Component Analysis (PCA) to the cluster, which involves obtaining the singular value decomposition of the temporal residual data associated with the cluster to obtain the loading vectors. Afterward, the loading vectors that capture the majority of the variance are identified. Typically, the first one or two loading vectors and their corresponding singular values are stored. Next, a feature relevance score is calculated, taking into account the importance of the loading vectors and the correlation of the process variables to these vectors. The process variables are then ranked in descending order based on their relevance scores. Finally, the top variables are reported for fault localization, with this work specifying that five variables are to be reported.
 #### Fault localization results
 Part of the results is shown in the table below
+
+##### Results table
 | Fault Type | PCA | Biased Variables |
 |------------|-----|------------------|
 | $f_2$ | $v_{34},v_{10},v_{47},v_{28},v_{30}$ | $v_{10},v_{47}, v_{22}, v_{17}, v_6$ |
@@ -121,5 +123,11 @@ Part of the results is shown in the table below
 | $f_{12}$ | $v_{29},v_{23},v_{22},v_{25},v_{26}$ | |
 | $f_{14}$ | $v_9,v_{51},v_{5},v_{21},v_4$ | |
 | $f_{21}$ | $v_8,v_{21},v_{25},v_{26},v_3$ | |
+##### Results ground truth 
+![ground_truth](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/fault_loc_groundtruth.png)
+
+
+
+
 
 
