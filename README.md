@@ -113,17 +113,20 @@ The process begins by applying Principal Component Analysis (PCA) to the cluster
 #### Fault localization results
 Part of the results is shown in the table below
 
-##### Results table
+
+
+### Results Table
 | Fault Type | PCA | Biased Variables |
 |------------|-----|------------------|
-| $f_2$ | $v_{34},v_{10},v_{47},v_{28},v_{30}$ | $v_{10},v_{47}, v_{22}, v_{17}, v_6$ |
-| $f_4$ | $v_9,v_{45}, v_{21}, v_{22}, v_{43}$ | $v_{51}, v_9$ |
-| $f_6$ | $v_{51},v_{46}, v_{52}, v_{45}, v_{42}$ | $v_{51}.v_{46}, v_{45},v_{52}, v_{21}$ |
-| $f_{11}$ | $v_{51}, v_9, v_{31}, v_{32}, v_{38}$ | $v_{51}$ |
-| $f_{12}$ | $v_{29},v_{23},v_{22},v_{25},v_{26}$ | |
-| $f_{14}$ | $v_9,v_{51},v_{5},v_{21},v_4$ | |
-| $f_{21}$ | $v_8,v_{21},v_{25},v_{26},v_3$ | |
-##### Results ground truth 
+| $f_2$ | $x_{34},x_{10},x_{47},x_{28},x_{30}$ | $x_{10},x_{47}, x_{22}, x_{17}, x_6$ |
+| $f_4$ | $x_9,x_{45}, x_{21}, x_{22}, x_{43}$ | $x_{51}, x_9$ |
+| $f_6$ | $x_{51},x_{46}, x_{52}, x_{45}, x_{42}$ | $x_{51}.x_{46}, x_{45},x_{52}, x_{21}$ |
+| $f_{11}$ | $x_{51}, x_9, x_{31}, x_{32}, x_{38}$ | $x_{51}$ |
+| $f_{12}$ | $x_{29},x_{23},x_{22},x_{25},x_{26}$ | |
+| $f_{14}$ | $x_9,x_{51},x_{5},x_{21},x_4$ | |
+| $f_{21}$ | $x_8,x_{21},x_{25},x_{26},x_3$ | |
+
+### Results Ground Truth
 ![ground_truth](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/fault_loc_groundtruth.png)
 
 
