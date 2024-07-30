@@ -15,7 +15,7 @@ This work presents a method that uses only Normal Operating Conditions (NOC) dat
 -  Detect faults
 -  Extract descriptive features
 -  Differentiate between faults
--  Find out which process variables relate the most to each discovered fault type
+-  Find out which process variables relate the most to each discovered fault type (fault localization)
 
 The proposed work is tested on the Tennessee Eastman Process (TEP). The full analysis is provided in this [Jupyter notebook](https://github.com/mbakr99/unsupervised-fault-discovery/blob/e5830f0c26041d850854d53189ec85d23f97779b/FCT_6.ipynb). This file provides a high-level description of the method. It also provides a discussion and interpretation of the results. 
 
@@ -103,5 +103,23 @@ In the figures above, each row represents a feature extraction method:
 
 ### Improving the results using a tribal-based consensus algorithm 
 How can the results of clustering three different sets of features be used to improve the final decision? An algorithm that mimics the social behavior of tribes in forming or ending social connections is developed here. The algorithm will combine the results to enhance the separation of fault types.
+
+(**Work in progress**)
+
+## Find out which process variables relate the most to each discovered fault type:
+After separating the faulty observations into clusters, each cluster’s temporal residual data is analyzed to determine the variables most associated with the underlying fault type. The temporal residual data is used for this analysis because it isolates the effect of the fault on the process by removing the nominal process behavior from the observed data. This approach ensures that the identified variables are directly linked to the faults, providing a clearer understanding of the fault mechanisms.
+#### Brief description of the fault localization method
+The process begins by applying Principal Component Analysis (PCA) to the cluster, which involves obtaining the singular value decomposition of the temporal residual data associated with the cluster to obtain the loading vectors. Afterward, the loading vectors that capture the majority of the variance are identified. Typically, the first one or two loading vectors and their corresponding singular values are stored. Next, a feature relevance score is calculated, taking into account the importance of the loading vectors and the correlation of the process variables to these vectors. The process variables are then ranked in descending order based on their relevance scores. Finally, the top variables are reported for fault localization, with this work specifying that five variables are to be reported.
+#### Fault localization results
+Part of the results is shown in the table below
+| Fault Type | PCA | Biased Variables |
+|------------|-----|------------------|
+| $f_2$ | $v_{34},v_{10},v_{47},v_{28},v_{30}$ | $v_{10},v_{47}, v_{22}, v_{17}, v_6$ |
+| $f_4$ | $v_9,v_{45}, v_{21}, v_{22}, v_{43}$ | $v_{51}, v_9$ |
+| $f_6$ | $v_{51},v_{46}, v_{52}, v_{45}, v_{42}$ | $v_{51}.v_{46}, v_{45},v_{52}, v_{21}$ |
+| $f_{11}$ | $v_{51}, v_9, v_{31}, v_{32}, v_{38}$ | $v_{51}$ |
+| $f_{12}$ | $v_{29},v_{23},v_{22},v_{25},v_{26}$ | |
+| $f_{14}$ | $v_9,v_{51},v_{5},v_{21},v_4$ | |
+| $f_{21}$ | $v_8,v_{21},v_{25},v_{26},v_3$ | |
 
 
