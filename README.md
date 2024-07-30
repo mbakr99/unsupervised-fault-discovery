@@ -24,6 +24,7 @@ The proposed work relies on capturing the behavior of the process during NOC. Th
 #### Temporal model:
 A Probabilistic Recurrent Neural Network (PRNN) of a custom structure was created using [Tensorflow](https://www.tensorflow.org) and [Tensorflow probaility](https://www.tensorflow.org/probability)  and used to capture the NOC temporal behavior. The modelt utilizes the latest measurement to predict the distribution of the future one. The actual measurement is then compared to the distribution, and a fault is reported based on "how well it conforms to the distribution". The NOC data was partitioned into training and testing sets. The training set was normalized using standard normalization, and the normalization parameters were saved to normalize the model inputs at testing and deployment. More details can be found in this [FCT_6.ipynb](https://github.com/mbakr99/unsupervised-fault-discovery/blob/e5830f0c26041d850854d53189ec85d23f97779b/FCT_6.ipynb). The prediction of the model on the testing set vs the actual measurements is shown below 
 
+
 ![Figure RNN results](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/pred_val.png)          
 
 Note that the temporal distribution captures the NOC behavior accurately as the actual measurments fall well within the confidence interval of the prediction at each time step.
@@ -83,8 +84,10 @@ The last column contains the results of [Sun et al. (2020)](https://doi.org/10.1
 
 The average fault detection accuracy, excluding faults f3​, f9​, and f15​, is 91.96%, which is slightly higher than the 91.07% reported by [Sun et al. (2020)](https://doi.org/10.1016/j.compchemeng.2020.106991). Additionally, for  f3​, f9​, and f15, the proposed model achieves a significantly lower false positive rate (FPR), with reductions of 62.5% for f3​ and 91.22% for f15​. This reduction is attributed to the better generalization of the proposed model and the novel anomaly score.
 
-## Extracting features:
-Extracting good features is crucial for distinguishing between different faults. Since no labels exist, the concept of "different" is vague and may need to be determined by field experts. However, a good starting point is to consider faults that have a distinct impact on process behavior as "different." To achieve this, the effect of the fault on process behavior is first isolated by subtracting the nominal NOC behavior from the process observations. This is accomplished using the predictions of the trained PRNN model and the static model. The difference between the process measurements and the measurements predicted by the PRNN or static model is referred to as residual data. By applying manual feature extraction methods to the residual data, different faults can be separated, as demonstrated below.
+## Extracting features + Differentiating between faults:
+Extracting good features is crucial for distinguishing between different faults. Since no labels exist, the concept of "different" is vague and may need to be determined by field experts. However, a good starting point is to consider faults that have a distinct impact on process behavior as "different." To achieve this, the effect of the fault on process behavior is first isolated by subtracting the nominal NOC behavior from the process observations. This is accomplished using the predictions of the trained PRNN model and the static model. The difference between the process measurements and the measurements predicted by the PRNN or static model is referred to as residual data. By applying manual and deep feature extraction methods to the residual data, different faults can be separated, as demonstrated in the left side of the figures below. The left column shows the [t-SNE](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html) extracted features color-coded using the true fault label. By clustering the extracted features using [DBSCAN](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html), one may be able to discover the underlying fault type. The clustering results are shown in the right column below.
+
+   
 
    
 ![lat_clust](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/t-sne_lat.png)
@@ -92,3 +95,13 @@ Extracting good features is crucial for distinguishing between different faults.
 ![stat_resid_clust](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/t-sne_stat_resid.png)
 
 ![lat_clust](https://github.com/mbakr99/unsupervised-fault-discovery/blob/main/imgs/t-sne_temp_resid.png)
+
+In the figures above, each row represents a feature extraction method:
+- **The first row**: These features are extracted using deep learning. The PRNN model is augmented by a Convolutional Neural Network (CNN) decoder and the model is trained using semi-supevised learning to minimize the autoencoder reconstruction error. *Note: The PRNN model is trained on minimizing both the prediction and reconstruction errors using a multiobjective loss*.
+- **The second row**: These represent the mean amplitude and the standard deviation features of the process variables. The features are extracted from the residual data using the static model as a representative of the NOC behavior (static residual).
+- **The third row**: These represent the mean amplitude and the standard deviation features of the process variables. The features are extracted from the residual data using the temporal model (PRNN) as a representative of the NOC behavior (temporal residual).
+
+### Improving the results using a tribal-based consensus algorithm 
+How can the results of clustering three different sets of features be used to improve the final decision? An algorithm that mimics the social behavior of tribes in forming or ending social connections is developed here. The algorithm will combine the results to enhance the separation of fault types.
+
+
