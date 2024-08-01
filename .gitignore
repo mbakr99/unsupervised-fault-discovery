@@ -1,0 +1,14 @@
+/IFCC/archive
+/IFCC/data/processed_data
+/IFCC/data/tep_source_data
+!/IFCC/data/tep_source_data/TEP_FaultFree_Training.RData
+/IFCC/archive.zip
+Fault_*
+faults_szc_mean_std.npy
+tqdm
+*.ipynb_checkpoints
+.ipynb_checkpoints/
+*.pyc
+tep-dataset.zip
+tepdataset
+Prediction_Using_Multiple_Time_Steps.ipynb
