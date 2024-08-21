@@ -1,17 +1,20 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
 from tensorflow import keras
-import pdb
+import os
+import h5py
 
 
+#@keras.saving.register_keras_serializable(package='SsLayers') : I removed this and implemented two functions to save and load the trained ss_cell. There
+#was a problem with serializing the lambda distribution layer (Check TensorFlow documentation for further details)
 class SsCell(keras.layers.Layer):
 #This is a class defining a non-linear state space cell. It only processes one time sample; thus, the input
 #is expected to be of shape (batch_size,features)
   #TODO: add a line of code such that the initializer results in random (seudo random) weights every time it is called
   _weight_initializer=keras.initializers.RandomNormal() #std=0.05
 
-  def __init__(self,num_states=50,output_dimension=10,state_nn_layers=None):
-    super().__init__()
+  def __init__(self,num_states=50,output_dimension=10,state_nn_layers=None,**kwargs):
+    super().__init__(**kwargs)
     self.num_states=num_states
     self.output_dim=output_dimension
     self.A=tf.Variable(initial_value=self._weight_initializer(shape=[num_states,num_states],dtype='float32'),name='A',trainable=True)
@@ -62,7 +65,7 @@ class SsCell(keras.layers.Layer):
 
     layers_o=[keras.Input(shape=[state_dim,],name='input_of_is_mdl'),
               #keras.layers.Dense(64,activation='sigmoid',trainable=True),
-              keras.layers.Dense(2*self.output_dim,activation='linear',trainable=True),
+              keras.layers.Dense(2*self.output_dim,activation='linear',trainable=True,name='dense_o'),
               #TODO: I removed the tfp.layers.DistributionLambda since it is not
               tfp.layers.DistributionLambda(lambda t: tfp.distributions.MultivariateNormalDiag(loc=t[...,:self.output_dim],scale_diag=1e-5 + tf.nn.sigmoid(c + t[..., self.output_dim:])))  #Something is wrong here
               #I need to use a tfp.distribution.MultivariateNormalDiag or Tril (Done)
@@ -86,6 +89,24 @@ class SsCell(keras.layers.Layer):
     state=self.mdl_is(temp)+self.b_state2
     output=self.mdl_o(state)
     return state,output #<NOTE:output> The output is of shape [_emp_reps,batch_size,num_output_features] (num_output_features=output_dimension)
+  # def get_config(self):
+  #     config=super().get_config()
+  #     config.update({'A':self.A,'b_state1':self.b_state1,'b_state2':self.b_state2,'mdl_is':keras.saving.serialize_keras_object(self.mdl_is),'mdl_o':keras.saving.serialize_keras_object(self.mdl_o),'B':self.B})
+  #     return config
+  def set_model(self,A,B,b_h1,b_h2,mdl_is,mdl_o,):
+      self.A = tf.Variable(A)
+      self.B = tf.Variable(B)
+      self.b_state1=tf.Variable(b_h1)
+      self.b_state2=tf.Variable(b_h2)
+      self.mdl_is=mdl_is
+      self.mdl_o=mdl_o
+
+
+
+
+
+
+
 
 
 class SsLayer(keras.layers.Layer):
@@ -210,3 +231,94 @@ class InstanceNormalization(keras.layers.Layer):
 
     def revert(self, x, mu, std):
         return std * (x - self.beta) / self.alpha + mu
+
+
+
+def save_my_ss_cell(ss_cell_inst,base_directory):
+    '''
+
+    :param ss_cell_inst: This is the ss_cell to be saved. Typically, you want to save a trained ss_cell
+    :param base_directory: This is the directory in which the application will reside in. A folder containing the ss_cell weights and data will be created in this
+    directory
+    :return: A boolean indicating the success of the saving process
+    '''
+    mdl_is = ss_cell_inst.mdl_is
+    mdl_o = ss_cell_inst.mdl_o #saving this model results in a problem as serializing distribution function is nor predictable
+    A = ss_cell_inst.A
+    B = ss_cell_inst.B
+    b_h1 = ss_cell_inst.b_state1
+    b_h2 = ss_cell_inst.b_state2
+    weights= {'A':A,'B':B,'b_h1':b_h1,'b_h2':b_h2,'mdl_o_kernel':mdl_o.weights[0],'mdl_o_bias':mdl_o.weights[-1]}
+
+    #check if the model folder exist already
+    ss_cell_folder='my_ss_cell'
+    filepath=os.path.join(base_directory,ss_cell_folder)
+
+    if os.path.isdir(filepath):
+        print("The my_ss_cell folder exists already. Saving the model to the folder.")
+        tf.keras.models.save_model(mdl_is,filepath+'/mdl_is.keras')
+
+
+        with h5py.File(filepath+'/weights.h5','w') as weight_file:
+            for key,weight in weights.items():
+                weight_file.create_dataset(name=key,data=weight)
+
+    else:
+        print("The my_ss_cell folder does not exist. Creating the folder and saving the model.")
+        os.mkdir(filepath)
+        tf.keras.models.save_model(mdl_is,filepath+'/mdl_is.keras')
+        #tf.keras.models.save_model(mdl_o,filepath+'/mdl_o.keras')
+
+        with h5py.File(filepath+'/weights.h5','w') as weight_file:
+            for key,weight in weights.items():
+                weight_file.create_dataset(name=key,data=weight)
+
+    return True
+
+
+def get_my_ss_cell(folder_path):
+    '''
+
+    :param folder_path: The path to the folder containing the stored ss_cell data
+    :return: Returns a new ss_cell with the trained weights. If the folder is not found at returns None
+    '''
+    def create_ss_cell_replica(mdl_is,weights):
+        mdl_o_kernel=weights['mdl_o_kernel']
+        mdl_o_bias=weights['mdl_o_bias']
+        s_dim=mdl_o_kernel.shape[0]
+        o_dim=int(mdl_o_bias.shape[0]/2)
+        c=tf.math.expm1(1.)
+        layers_o=[keras.Input(shape=[s_dim,],name='o_in'),
+                  keras.layers.Dense(2*o_dim,activation='linear',trainable=True,name='dense_o'),
+                  tfp.layers.DistributionLambda(lambda t: tfp.distributions.MultivariateNormalDiag(loc=t[...,:o_dim],scale_diag=1e-5 + tf.nn.sigmoid(c + t[...,o_dim:])),name='dist-layer')
+              ]
+        mdl_o=keras.Sequential(layers_o)
+        #setting mdl_o weights
+        keys=['mdl_o_kernel','mdl_o_bias']
+        mdl_o_weights=[weights[key] for key in keys]
+        mdl_o.set_weights(mdl_o_weights)
+
+
+        #creating an SsCell instance to store the trained weights
+        ss_cell=SsCell()
+        ss_cell.set_model(A=weights['A'],B=weights['B'],b_h1=weights['b_h1'],b_h2=weights['b_h2'],mdl_is=mdl_is,mdl_o=mdl_o)
+        return ss_cell
+
+    #confirm that the weigths folder exist
+    if os.path.isdir(folder_path):
+        print('Found the weights folder')
+        print('Loading the weights')
+        #retirve the weights
+        mdl_is=tf.keras.models.load_model(folder_path+'/mdl_is.keras')
+        with h5py.File(folder_path+'/weights.h5', 'r') as f:
+            weights = {key: f[key][()] for key in f.keys()}
+
+        return create_ss_cell_replica(mdl_is,weights)
+
+    else:
+        print('Colud not load the weights. Folder was not found.')
+        return None
+
+
+
+
